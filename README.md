@@ -63,10 +63,3 @@ macOS / Linux 啟用環境請改用 `source .venv/bin/activate`。
 
 資料來源：[UCI WDBC dataset](https://archive.ics.uci.edu/dataset/17/breast-cancer-wisconsin-diagnostic)，授權 CC BY 4.0。
 
-## 履歷可用描述
-
-> 建置可解釋式二元分類專題，以 Python/scikit-learn 完成資料檢查、Pipeline 前處理、分層交叉驗證與 Logistic Regression、Random Forest、SVM 模型比較；分析 Precision、Recall、F1、ROC-AUC 與決策閾值，並以 Streamlit 製作互動展示頁及單筆特徵貢獻解釋。
-
-## 面試說法（30 秒）
-
-「這個專題不是只追求 Accuracy。我先用 Pipeline 避免資料洩漏，再用分層交叉驗證比較三種模型。選模時優先看 Recall，同時觀察 Precision、F1 與 ROC-AUC 的取捨。展示頁能調整閾值並看到單筆資料哪些特徵推高或降低模型分數；最後也整理資料限制與模型可能失效的情境。」
