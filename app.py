@@ -49,7 +49,7 @@ def load_artifacts():
 st.set_page_config(page_title="生醫 AI｜乳房腫瘤分類", page_icon="🧬", layout="wide")
 model, split, comparison, ranges, baseline_metrics = load_artifacts()
 
-st.title("可解釋式乳房腫瘤 AI 分類")
+st.title("乳房腫瘤分類專題")
 st.caption("WDBC 公開資料｜學習與作品展示｜不可作為醫療診斷或治療依據")
 
 overview, demo, ecg_page, bioreactor_page, evaluation, limitations = st.tabs(
@@ -209,4 +209,3 @@ with limitations:
         "- 真實醫療產品還需要資安、隱私、公平性、法規與臨床流程驗證。"
     )
     st.caption("資料來源：UCI WDBC（CC BY 4.0）；程式透過 scikit-learn 內建資料副本載入。")
-
