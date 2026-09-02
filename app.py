@@ -108,13 +108,13 @@ st.set_page_config(
 st.subheader("專題頁面切換")
 nav_left, nav_right = st.columns(2)
 nav_left.markdown(
-    '<a href="/?project=breast" target="_self" style="display:block;padding:.55rem 1rem;'
+    '<a href="/~/+/?project=breast" target="_self" style="display:block;padding:.55rem 1rem;'
     'border:1px solid #d0d7de;border-radius:.5rem;text-align:center;'
     'text-decoration:none;font-weight:600;">🧬 乳房腫瘤分類專題</a>',
     unsafe_allow_html=True,
 )
 nav_right.markdown(
-    '<a href="/?project=ecg" target="_self" style="display:block;padding:.55rem 1rem;'
+    '<a href="/~/+/?project=ecg" target="_self" style="display:block;padding:.55rem 1rem;'
     'border:1px solid #d0d7de;border-radius:.5rem;text-align:center;'
     'text-decoration:none;font-weight:600;">💓 ECG 心律分析專題</a>',
     unsafe_allow_html=True,
