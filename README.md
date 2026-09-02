@@ -10,6 +10,7 @@
 - 同時呈現 Accuracy、Precision、Recall、F1、ROC-AUC 與混淆矩陣
 - 以 Logistic Regression 係數解釋特徵對模型輸出的影響
 - Streamlit 互動介面支援範例個案、閾值調整與單筆解釋
+- 同一個 App 內提供 ECG 訊號分析與生物反應器異常分析獨立頁面
 - 訓練與測試資料明確分離，避免資料洩漏
 
 ## 快速開始
@@ -28,7 +29,7 @@ macOS / Linux 啟用環境請改用 `source .venv/bin/activate`。
 
 ```text
 .
-├── app.py                 # Streamlit 互動展示
+├── app.py                 # Streamlit 多頁籤互動展示
 ├── train.py               # 模型比較、選模與產出 artifacts
 ├── biomedical_ai.py       # 資料、模型、評估共用函式
 ├── requirements.txt
@@ -62,4 +63,11 @@ macOS / Linux 啟用環境請改用 `source .venv/bin/activate`。
 - 任何模型輸出都應輔助決策，不應取代領域專家判斷。
 
 資料來源：[UCI WDBC dataset](https://archive.ics.uci.edu/dataset/17/breast-cancer-wisconsin-diagnostic)，授權 CC BY 4.0。
+
+## 延伸頁面
+
+- **ECG 訊號分析**：以可重現的合成波形示範取樣、雜訊、R 峰偵測與心率估計，並說明可延伸至 RR interval 特徵與心律分類。
+- **生物反應器製程趨勢與異常分析**：以合成的 pH、溫度、溶氧、葡萄糖與菌體濃度時間序列，使用 Isolation Forest 示範異常偵測與趨勢視覺化。
+
+兩頁均為學習展示，不使用真實病患或生產資料，也不提供醫療或製程控制建議。
 
