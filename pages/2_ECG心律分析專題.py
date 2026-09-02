@@ -5,7 +5,24 @@ import pandas as pd
 import streamlit as st
 
 
-st.set_page_config(page_title="ECG 心律分析專題", page_icon="💓", layout="wide")
+st.set_page_config(
+    page_title="ECG 心律分析專題",
+    page_icon="💓",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+st.subheader("專題頁面切換")
+nav_left, nav_right = st.columns(2)
+nav_left.page_link("app.py", label="乳房腫瘤分類專題", icon="🧬", use_container_width=True)
+nav_right.page_link(
+    "pages/2_ECG心律分析專題.py",
+    label="ECG 心律分析專題",
+    icon="💓",
+    use_container_width=True,
+)
+st.divider()
+
 st.title("ECG 心律分析專題")
 st.caption("獨立專題主頁｜合成 ECG 訊號｜學習用途，不是醫療檢測工具")
 
@@ -60,4 +77,3 @@ st.markdown(
 )
 
 st.warning("本頁使用合成訊號，不能用於判斷個人心律或任何醫療狀況。")
-
