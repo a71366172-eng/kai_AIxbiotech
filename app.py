@@ -44,8 +44,24 @@ def load_artifacts():
     return model, split, comparison, ranges, metrics
 
 
-st.set_page_config(page_title="生醫 AI｜乳房腫瘤分類", page_icon="🧬", layout="wide")
+st.set_page_config(
+    page_title="生醫 AI｜乳房腫瘤分類",
+    page_icon="🧬",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 model, split, comparison, ranges, baseline_metrics = load_artifacts()
+
+st.subheader("專題頁面切換")
+nav_left, nav_right = st.columns(2)
+nav_left.page_link("app.py", label="乳房腫瘤分類專題", icon="🧬", use_container_width=True)
+nav_right.page_link(
+    "pages/2_ECG心律分析專題.py",
+    label="ECG 心律分析專題",
+    icon="💓",
+    use_container_width=True,
+)
+st.divider()
 
 st.title("乳房腫瘤分類專題")
 st.caption("WDBC 公開資料｜學習與作品展示｜不可作為醫療診斷或治療依據")
@@ -142,4 +158,3 @@ with limitations:
         "- 真實醫療產品還需要資安、隱私、公平性、法規與臨床流程驗證。"
     )
     st.caption("資料來源：UCI WDBC（CC BY 4.0）；程式透過 scikit-learn 內建資料副本載入。")
-
