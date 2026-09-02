@@ -54,12 +54,17 @@ model, split, comparison, ranges, baseline_metrics = load_artifacts()
 
 st.subheader("專題頁面切換")
 nav_left, nav_right = st.columns(2)
-nav_left.page_link("app.py", label="乳房腫瘤分類專題", icon="🧬", use_container_width=True)
-nav_right.page_link(
-    "pages/2_ECG心律分析專題.py",
-    label="ECG 心律分析專題",
-    icon="💓",
-    use_container_width=True,
+nav_left.markdown(
+    '<a href="./" target="_self" style="display:block;padding:.55rem 1rem;'
+    'border:1px solid #d0d7de;border-radius:.5rem;text-align:center;'
+    'text-decoration:none;font-weight:600;">🧬 乳房腫瘤分類專題</a>',
+    unsafe_allow_html=True,
+)
+nav_right.markdown(
+    '<a href="./ECG心律分析專題" target="_self" style="display:block;padding:.55rem 1rem;'
+    'border:1px solid #d0d7de;border-radius:.5rem;text-align:center;'
+    'text-decoration:none;font-weight:600;">💓 ECG 心律分析專題</a>',
+    unsafe_allow_html=True,
 )
 st.divider()
 
