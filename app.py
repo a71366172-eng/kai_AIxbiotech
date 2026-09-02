@@ -12,8 +12,6 @@ import pandas as pd
 import streamlit as st
 
 from biomedical_ai import evaluate, logistic_contributions
-from sklearn.ensemble import IsolationForest
-from sklearn.metrics import mean_absolute_error
 
 
 ROOT = Path(__file__).resolve().parent
@@ -52,8 +50,8 @@ model, split, comparison, ranges, baseline_metrics = load_artifacts()
 st.title("乳房腫瘤分類專題")
 st.caption("WDBC 公開資料｜學習與作品展示｜不可作為醫療診斷或治療依據")
 
-overview, demo, ecg_page, bioreactor_page, evaluation, limitations = st.tabs(
-    ["專題總覽", "互動預測", "ECG 訊號分析", "生物反應器", "模型評估", "限制與倫理"]
+overview, demo, evaluation, limitations = st.tabs(
+    ["專題總覽", "互動預測", "模型評估", "限制與倫理"]
 )
 
 with overview:
@@ -114,71 +112,6 @@ with demo:
     ax.set_xlabel("Contribution to malignant log-odds (red: higher; blue: lower)")
     right.pyplot(fig, width="stretch")
 
-with ecg_page:
-    st.subheader("ECG 心律訊號分析（示範頁）")
-    st.caption("以可重現的合成 ECG 波形示範訊號處理；不是醫療檢測工具。")
-    ecg_kind = st.selectbox("波形情境", ["規律心律", "含雜訊心律", "不規律示範"], key="ecg_kind")
-    duration = st.slider("展示秒數", 5, 15, 8, key="ecg_duration")
-    sample_rate = 250
-    time = np.arange(0, duration, 1 / sample_rate)
-    rng = np.random.default_rng(42)
-    heart_rate = {"規律心律": 72, "含雜訊心律": 78, "不規律示範": 92}[ecg_kind]
-    phase = (time * heart_rate / 60) % 1
-    # A simple beat template: P, QRS and T-like Gaussian components.
-    signal = (
-        0.12 * np.exp(-((phase - 0.18) / 0.035) ** 2)
-        - 0.18 * np.exp(-((phase - 0.39) / 0.012) ** 2)
-        + 1.0 * np.exp(-((phase - 0.41) / 0.010) ** 2)
-        - 0.25 * np.exp(-((phase - 0.44) / 0.014) ** 2)
-        + 0.28 * np.exp(-((phase - 0.68) / 0.08) ** 2)
-    )
-    if ecg_kind == "含雜訊心律":
-        signal += 0.08 * np.sin(2 * np.pi * 0.7 * time) + rng.normal(0, 0.06, len(time))
-    elif ecg_kind == "不規律示範":
-        signal += 0.04 * np.sin(2 * np.pi * 0.4 * time)
-        for start in np.arange(0.8, duration, 1.3):
-            signal[int(start * sample_rate): int((start + 0.05) * sample_rate)] += 0.45
-    ecg_frame = pd.DataFrame({"time_s": time, "amplitude": signal})
-    st.line_chart(ecg_frame.set_index("time_s"), height=320)
-    threshold = st.slider("示範 R 峰偵測閾值", 0.2, 1.0, 0.55, 0.05, key="ecg_threshold")
-    peaks = np.where((signal[1:-1] > threshold) & (signal[1:-1] > signal[:-2]) & (signal[1:-1] > signal[2:]))[0] + 1
-    estimated_hr = (len(peaks) / duration) * 60 if len(peaks) else 0
-    a, b, c = st.columns(3)
-    a.metric("偵測到的峰值", int(len(peaks)))
-    b.metric("示範心率（BPM）", f"{estimated_hr:.1f}")
-    c.metric("取樣率", f"{sample_rate} Hz")
-    st.write("可延伸：加入濾波、R 峰間距（RR interval）特徵、正常／異常分類，以及跨受試者驗證。")
-
-with bioreactor_page:
-    st.subheader("生物反應器製程趨勢與異常分析（示範頁）")
-    st.caption("以合成的生技製程資料示範時間序列分析與異常偵測；不代表實際生產控制。")
-    points = st.slider("模擬資料長度", 100, 500, 240, 20, key="bio_points")
-    contamination = st.slider("示範異常比例", 0.00, 0.08, 0.03, 0.01, key="bio_anomaly")
-    rng = np.random.default_rng(7)
-    t = np.arange(points)
-    phase = t / max(points - 1, 1)
-    bio = pd.DataFrame(
-        {
-            "time_h": t * 0.5,
-            "pH": 6.8 + 0.12 * np.sin(t / 25) + rng.normal(0, 0.025, points),
-            "temperature_C": 37.0 + 0.15 * np.sin(t / 40) + rng.normal(0, 0.04, points),
-            "dissolved_oxygen_pct": 68 - 10 * phase + 2.5 * np.sin(t / 17) + rng.normal(0, 0.8, points),
-            "glucose_g_L": 18 * np.exp(-2.2 * phase) + rng.normal(0, 0.25, points),
-            "biomass_g_L": 0.5 + 8 / (1 + np.exp(-10 * (phase - 0.45))) + rng.normal(0, 0.12, points),
-        }
-    )
-    anomaly_count = max(1, int(points * contamination))
-    anomaly_idx = rng.choice(points, anomaly_count, replace=False)
-    bio.loc[anomaly_idx, "pH"] += rng.choice([-0.7, 0.7], anomaly_count)
-    bio.loc[anomaly_idx, "temperature_C"] += rng.choice([-1.8, 1.8], anomaly_count)
-    features = ["pH", "temperature_C", "dissolved_oxygen_pct", "glucose_g_L", "biomass_g_L"]
-    detector = IsolationForest(contamination=max(contamination, 0.01), random_state=42)
-    bio["anomaly"] = detector.fit_predict(bio[features]) == -1
-    st.line_chart(bio.set_index("time_h")[features], height=350)
-    st.dataframe(bio.loc[bio["anomaly"], ["time_h"] + features].head(10), hide_index=True)
-    st.metric("模型標記的異常筆數", int(bio["anomaly"].sum()))
-    st.write("可延伸：加入批次分群、軟感測器、預測維護、製程能力分析與異常原因追蹤。")
-
 with evaluation:
     st.subheader("交叉驗證模型比較（僅訓練集）")
     display_cols = ["model", "cv_recall_mean", "cv_precision_mean", "cv_f1_mean", "cv_roc_auc_mean"]
@@ -209,3 +142,4 @@ with limitations:
         "- 真實醫療產品還需要資安、隱私、公平性、法規與臨床流程驗證。"
     )
     st.caption("資料來源：UCI WDBC（CC BY 4.0）；程式透過 scikit-learn 內建資料副本載入。")
+
